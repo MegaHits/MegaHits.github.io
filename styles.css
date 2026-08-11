@@ -321,6 +321,8 @@ html[data-theme="light"] .context-divider { background: #c8e7f2; }
   .compact-field { flex: 0 0 auto; margin-left: 0; }
   .compact-field select { height: 44px; font-size: 16px; }
   .roll-wrap { min-height: 0; height: auto; }
+  #piano-roll canvas { cursor: grab !important; touch-action: none; }
+  #piano-roll canvas.mobile-roll-panning { cursor: grabbing !important; }
 
   .transport {
     z-index: 5;
