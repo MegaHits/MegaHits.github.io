@@ -268,9 +268,9 @@
 
     <dialog id="shared-song-dialog" class="modal shared-song-modal" aria-labelledby="shared-song-dialog-title">
       <form id="shared-song-form">
-        <div class="modal-header"><div><p class="eyebrow">OPEN SHARED SONG</p><h2 id="shared-song-dialog-title">Replace current project?</h2></div><button id="shared-song-close" class="modal-close" type="button" aria-label="Close">×</button></div>
-        <p class="modal-lead">Opening this shared song creates a new project with one song. Your current project changes will be discarded.</p>
-        <div class="modal-actions"><button id="shared-song-cancel" type="button" class="secondary-button">Keep current project</button><button type="submit" class="export-button">Open shared song</button></div>
+        <div class="modal-header"><div><p class="eyebrow">OPEN SHARED SONG</p><h2 id="shared-song-dialog-title">What would you like to do?</h2></div><button id="shared-song-close" class="modal-close" type="button" aria-label="Close">×</button></div>
+        <p id="shared-song-dialog-message" class="modal-lead">Add the shared song to this project, or create a new project containing only the shared song.</p>
+        <div class="modal-actions"><button id="shared-song-cancel" type="button" class="secondary-button">Keep current project</button><button id="shared-song-new-project" type="button" class="secondary-button">Create new project</button><button id="shared-song-add" type="submit" class="export-button">Add to current project</button></div>
       </form>
     </dialog>
 

@@ -146,6 +146,7 @@ webaudio-pianoroll { display: block !important; }
 .tempo-control input { width: 57px; padding: 5px; border: 0; border-bottom: 1px solid #424754; outline: 0; background: transparent; color: #fff; font: 14px ui-monospace, monospace; }
 .export-button, .secondary-button { min-height: 37px; display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 0 15px; border: 0; border-radius: 7px; background: var(--blue); color: white; font-size: 11px; font-weight: 700; }
 .export-button:hover { background: #6683ff; }.export-button svg { width: 16px; }
+.export-button:disabled { cursor: not-allowed; opacity: .45; }
 
 .export-panel { min-width: 0; overflow: auto; padding: 34px clamp(20px, 4vw, 58px); background: #191b21; }
 .export-page-header { max-width: 760px; margin-bottom: 25px; }
@@ -188,6 +189,7 @@ webaudio-pianoroll { display: block !important; }
 .export-warning[hidden] { display: none; }
 .export-summary strong.over { color: #ff8990; }
 .modal-actions { display: flex; justify-content: end; gap: 9px; margin-top: 18px; }.secondary-button { border: 1px solid #434854; background: #2c2f38; color: #b8bfcc; }
+.shared-song-modal .modal-actions { flex-wrap: wrap; }
 .help-modal ol { padding-left: 20px; color: #c6ccd8; font-size: 12px; line-height: 1.75; }
 .toast { pointer-events: none; position: fixed; z-index: 10; left: 50%; bottom: 80px; transform: translate(-50%, 15px); padding: 10px 15px; border: 1px solid #495063; border-radius: 7px; background: #292d37; color: #e9edf7; font-size: 11px; opacity: 0; transition: .2s; box-shadow: 0 8px 25px #0007; }.toast.show { opacity: 1; transform: translate(-50%, 0); }
 .note-context-menu { position: fixed; z-index: 50; width: 180px; padding: 6px; border: 1px solid #474c59; border-radius: 8px; background: #292c34; box-shadow: 0 14px 38px #000a; }
