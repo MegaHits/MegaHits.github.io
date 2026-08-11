@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17181e" />
+    <title>MHS3 Score Editor</title>
+    <script>try { if (localStorage.getItem("mhs3-score-theme") === "light") document.documentElement.dataset.theme = "light"; } catch {}</script>
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      window.addEventListener("error", function (event) {
+        document.documentElement.dataset.appError = event.message || "Application startup error";
+      });
+    </script>
+  </head>
+  <body>
+    <svg class="svg-defs" aria-hidden="true">
+      <symbol id="i-logo" viewBox="0 0 24 24"><path d="M4 4v16M9 4v16M14 4v16M19 4v16M4 8h5M14 14h5"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h5"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v6h14v-6"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v12m0 0 4-4m-4 4-4-4M5 20h14"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M5 12h8a6 6 0 0 1 6 6"/></symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5m4-5h-8a6 6 0 0 0-6 6"/></symbol>
+      <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10zM16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10zM17 10l4 4m0-4-4 4"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path class="filled" d="m8 5 11 7-11 7z"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path class="filled" d="M7 5h4v14H7zm6 0h4v14h-4z"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><path class="filled" d="M6 6h12v12H6z"/></symbol>
+      <symbol id="i-loop" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3M3 11V9a4 4 0 0 1 4-4h13M7 22l-3-3 3-3m14-3v2a4 4 0 0 1-4 4H4"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></symbol>
+      <symbol id="i-ghost" viewBox="0 0 24 24"><path d="M8 7h11v9H8zM5 10H3v9h11v-2"/></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 4-1 11-11-3-3L5 16zM14 7l3 3"/></symbol>
+      <symbol id="i-select" viewBox="0 0 24 24"><path d="m5 3 13 9-6 1 3 6-3 1-3-6-4 4z"/></symbol>
+      <symbol id="i-cut" viewBox="0 0 24 24"><circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="m9 9 10 7M9 15l10-7"/></symbol>
+      <symbol id="i-glue" viewBox="0 0 24 24"><path d="M9 15 7 17a3 3 0 0 1-4-4l4-4a3 3 0 0 1 4 0M15 9l2-2a3 3 0 0 1 4 4l-4 4a3 3 0 0 1-4 0M8 16l8-8"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.5 2.1c-.8.4-1.2 1-1.2 1.9M12 17h.01"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+    </svg>
+
+    <header class="topbar">
+      <div class="brand"><svg><use href="#i-logo"/></svg><span>MHS3 <b>Score Editor</b></span></div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" id="tab-editor"><svg><use href="#i-logo"/></svg><span>Piano Roll</span></button>
+        <button class="nav-item" id="top-export-rom" aria-controls="export-panel"><svg><use href="#i-download"/></svg><span>Export ROM</span></button>
+        <button class="nav-item" id="top-export-c" aria-controls="export-panel"><svg><use href="#i-download"/></svg><span>Export C</span></button>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-button" id="undo" title="Undo (Ctrl+Z)"><svg><use href="#i-undo"/></svg></button>
+        <button class="icon-button" id="redo" title="Redo (Ctrl+Shift+Z)"><svg><use href="#i-redo"/></svg></button>
+        <button class="icon-button" id="theme-toggle" type="button" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false"><svg><use href="#i-sun"/></svg></button>
+        <button class="help-button" id="help"><svg><use href="#i-help"/></svg><span>Help</span></button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="project-block">
+          <p class="eyebrow">PROJECT</p>
+          <input id="project-name" class="project-name" value="Untitled melody" aria-label="Project name" maxlength="80" />
+          <div class="file-actions">
+            <button id="new-project"><span class="action-symbol">＋</span><span>New</span></button>
+            <button id="open-project"><svg><use href="#i-upload"/></svg><span>Open</span></button>
+            <button id="save-project"><svg><use href="#i-file"/></svg><span>Save</span></button>
+            <span class="import-divider">IMPORT</span>
+            <button id="import-beepbox"><svg><use href="#i-upload"/></svg><span>BeepBox JSON</span></button>
+            <button id="import-midi"><svg><use href="#i-upload"/></svg><span>MIDI File</span></button>
+            <button id="import-c"><svg><use href="#i-upload"/></svg><span>C Source</span></button>
+            <input id="project-file" type="file" accept="application/json,.json" hidden />
+            <input id="midi-file" type="file" accept="audio/midi,audio/x-midi,.mid,.midi" hidden />
+            <input id="beepbox-file" type="file" accept="application/json,.json" hidden />
+            <input id="c-file" type="file" accept="text/plain,text/x-c,.c,.h" hidden />
+          </div>
+        </div>
+
+        <section class="songs-block" aria-label="Songs">
+          <div class="songs-heading"><span>TRACKS</span><span id="song-limit">1 / 8</span></div>
+          <div id="song-list" class="song-list"></div>
+          <div class="song-name-row"><input id="song-name" class="song-name" value="Song 1" maxlength="48" aria-label="Selected song name" /><button id="share-song" class="song-share-button" type="button" title="Share this song" aria-label="Share this song"><svg><use href="#i-share"/></svg></button></div>
+          <div class="song-actions">
+            <button id="add-song" type="button">+ Add</button>
+            <button id="duplicate-song" type="button">Duplicate</button>
+            <button id="delete-song" type="button">Delete</button>
+          </div>
+        </section>
+
+        <div class="tracks-heading"><span>CHANNELS</span><button id="mode-toggle" class="dual-badge" type="button" title="Switch hardware mode">DUAL TONE</button></div>
+        <div id="track-list" class="track-list">
+          <button class="track-card active" data-track="0">
+            <span class="track-color channel-one">1</span>
+            <span class="track-copy"><strong>Tone 1</strong><small>Square wave · <span class="note-count">0 notes</span></small></span>
+            <span class="track-meter"><i></i><i></i><i></i></span>
+          </button>
+          <button class="track-card" data-track="1">
+            <span class="track-color channel-two">2</span>
+            <span class="track-copy"><strong>Tone 2</strong><small>Square wave · <span class="note-count">0 notes</span></small></span>
+            <span class="track-meter"><i></i><i></i><i></i></span>
+          </button>
+          <button class="track-card sample-track" data-track="2" hidden>
+            <span class="track-color channel-sample">3</span>
+            <span class="track-copy"><strong>PCM Samples</strong><small>One-shot voice · <span class="note-count">0 notes</span></small></span>
+            <span class="track-meter"><i></i><i></i><i></i></span>
+          </button>
+        </div>
+
+        <section class="channel-settings" aria-label="Channel settings">
+          <div class="section-title"><span id="settings-channel">TONE 1</span><button id="mute" class="icon-button" title="Mute channel"><svg><use href="#i-volume"/></svg></button></div>
+          <label>Decay <output id="decay-value">1300</output><input id="decay" type="range" min="50" max="5000" step="50" value="1300" /><small class="setting-hint">Firmware CHxENV value · saved with project</small></label>
+        </section>
+
+        <section id="sample-settings" class="sample-settings" aria-label="PCM sample library" hidden>
+          <div class="section-title"><span>PCM LIBRARY</span><button id="sample-mute" class="icon-button" title="Mute sample channel"><svg><use href="#i-volume"/></svg></button></div>
+          <div id="sample-list" class="sample-list"></div>
+          <small class="setting-hint">Bundled from the MHS2 prototype firmware. Click a sound to audition it.</small>
+        </section>
+
+        <div class="format-note"><strong id="format-title">MHS3 range</strong><span id="format-description">C2–C6 · 49 pitches · 2 channels</span></div>
+      </aside>
+
+      <section class="editor-panel">
+        <div class="editor-toolbar">
+          <div class="active-track-title"><span id="active-dot" class="dot channel-one"></span><div><small>EDITING</small><strong id="active-track-name">Tone 1</strong></div></div>
+          <div class="tool-group" aria-label="Piano roll tools">
+            <button class="tool edit-tool" data-tool="select" title="Select and move notes"><svg><use href="#i-select"/></svg><span>Select</span></button>
+            <button class="tool edit-tool active" data-tool="draw" title="Draw, move, and resize notes"><svg><use href="#i-pencil"/></svg><span>Draw</span></button>
+            <button class="tool edit-tool" data-tool="cut" title="Split a note at the snapped position"><svg><use href="#i-cut"/></svg><span>Cut</span></button>
+            <button class="tool edit-tool" data-tool="glue" title="Join touching notes of the same pitch"><svg><use href="#i-glue"/></svg><span>Glue</span></button>
+            <span class="toolbar-separator"></span>
+            <button id="ghost-notes" class="tool active" title="Show notes from the other channel" aria-pressed="true"><svg><use href="#i-ghost"/></svg><span>Ghosts</span></button>
+            <label class="compact-field"><span>Snap</span><select id="snap"><option value="1">1/16</option><option value="2">1/8</option><option value="4" selected>1/4</option><option value="8">1/2</option></select></label>
+          </div>
+          <div class="shortcut-hint"><kbd>Drag</kbd> draw/move · <kbd>Ctrl</kbd>+<kbd>Drag</kbd> select · <kbd>Del</kbd> remove</div>
+        </div>
+        <div id="roll-wrap" class="roll-wrap">
+          <webaudio-pianoroll
+            id="piano-roll"
+            width="900" height="600" editmode="dragmono" timebase="16"
+            xrange="64" yrange="32" xoffset="0" yoffset="44" grid="4" snap="4"
+            xruler="28" yruler="34" kbwidth="54" octadj="-1" markstart="0" markend="128"
+            xscroll="0" yscroll="0" wheelzoomx="0"
+            collt="#1d2028" coldk="#191b22" colgrid="#323641" colnote="#5d7cff"
+            colnotesel="#8da2ff" colnoteborder="#a9b7ff" colnoteselborder="#ffffff"
+            colrulerbg="#252831" colrulerfg="#aeb5c6" colrulerborder="#3a3e49">
+          </webaudio-pianoroll>
+          <div id="empty-state" class="empty-state"><svg><use href="#i-pencil"/></svg><strong>Draw your first note</strong><span>Click and drag across the grid</span></div>
+          <input id="vertical-scroll" class="roll-scroll vertical-scroll" type="range" min="36" max="53" value="44" step="1" aria-label="Scroll pitches" />
+          <input id="horizontal-scroll" class="roll-scroll horizontal-scroll" type="range" min="0" max="64" value="0" step="1" aria-label="Scroll timeline" />
+          <span class="scroll-corner" aria-hidden="true"></span>
+          <div class="roll-zoom-controls" role="group" aria-label="Piano roll zoom">
+            <div class="roll-zoom-axis roll-zoom-vertical">
+              <button id="zoom-vertical-out" type="button" title="Zoom pitches out" aria-label="Zoom pitches out">−</button>
+              <span class="zoom-marker" aria-hidden="true"></span>
+              <button id="zoom-vertical-in" type="button" title="Zoom pitches in" aria-label="Zoom pitches in">+</button>
+            </div>
+            <div class="roll-zoom-axis roll-zoom-horizontal">
+              <button id="zoom-horizontal-out" type="button" title="Zoom timeline out" aria-label="Zoom timeline out">−</button>
+              <span class="zoom-marker" aria-hidden="true"></span>
+              <button id="zoom-horizontal-in" type="button" title="Zoom timeline in" aria-label="Zoom timeline in">+</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="export-panel" class="export-panel" hidden>
+        <div class="export-page-header"><p class="eyebrow">HARDWARE OUTPUT</p><h1 id="export-page-title">Export ROM</h1><p id="export-page-description">Export the selected melody as an EEPROM image.</p></div>
+        <div class="export-grid">
+          <article id="export-rom-card" class="export-card">
+            <div class="export-card-heading"><div><span class="export-type">MHS3</span><h2>EEPROM image</h2></div><span id="binary-song-name" class="selected-song-badge">Song 1</span></div>
+            <p>The MHS3 binary format stores one dual-tone song. This exports the currently selected song.</p>
+            <label class="dialog-field">EEPROM size<select id="chip-size"><option value="0">24C02 · 256 bytes · 52 events/channel</option><option value="1">24C16 · 2 KB · 500 events/channel</option><option value="2">24C64 · 8 KB · 2036 events/channel</option></select></label>
+            <div class="export-summary">
+              <div><span>Tone 1</span><strong id="ch1-events">0 / 52</strong></div>
+              <div><span>Tone 2</span><strong id="ch2-events">0 / 52</strong></div>
+              <div><span>Song speed</span><strong id="song-speed">125</strong></div>
+              <div><span>Mode</span><strong id="binary-mode">Dual channel</strong></div>
+            </div>
+            <p id="eeprom-pcm-warning" class="export-warning" role="note" hidden><strong>PCM is not included.</strong> MHS3 EEPROM images contain only Tone 1 and Tone 2. Export the MHS2M C header to retain channel 3.</p>
+            <p id="export-error" class="export-error" role="alert"></p>
+            <button id="confirm-export" class="export-button"><svg><use href="#i-download"/></svg>Download .mhs3</button>
+          </article>
+          <article id="export-c-card" class="export-card" hidden>
+            <div class="export-card-heading"><div><span class="export-type">C HEADER</span><h2 id="c-title">MHS062 firmware songs</h2></div><span id="firmware-song-count" class="selected-song-badge">1 / 8 slots</span></div>
+            <p id="c-description">Generates the song tables and playback configuration used directly by <code>main.c</code>.</p>
+            <fieldset class="playback-config">
+              <legend>PLAYBACK CONFIG</legend>
+              <div class="playback-config-grid">
+                <label class="chip-profile-field">Chip profile<select id="chip-profile"></select></label>
+                <label>Power-on play<select data-playback-config="powerOnPlay"><option value="0">Disabled</option><option value="1">Enabled</option></select></label>
+                <label>Power-on loop<select data-playback-config="powerOnLoop"><option value="0">Disabled</option><option value="1">Enabled</option></select></label>
+                <label>Anti-noise debounce<select data-playback-config="antiNoiseDebounce"><option value="0">Disabled</option><option value="1">Enabled</option></select></label>
+                <div id="io-config" class="profile-pin-config"></div>
+                <div id="oky-config" class="profile-pin-config"></div>
+              </div>
+            </fieldset>
+            <p id="c-trigger-warning" class="export-warning" role="note" hidden><strong>No playback trigger.</strong> Enable power-on play or configure an OKY input to start songs.</p>
+            <div class="firmware-facts"><span><small>Controls</small><b id="c-selector-value">Profile-defined IO / OKY</b></span><span><small id="c-feature-label">Decay</small><b id="c-feature-value">Per-song envelopes</b></span><span><small>Limit</small><b id="c-limit-value">255 events/channel</b></span></div>
+            <textarea id="c-preview" class="c-preview" readonly spellcheck="false" aria-label="Generated C source preview"></textarea>
+            <p id="c-export-error" class="export-error" role="alert"></p>
+            <button id="export-c" class="export-button"><svg><use href="#i-download"/></svg><span id="export-c-label">Download songs.h</span></button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="transport">
+      <div class="transport-left"><span class="status-light"></span><span id="save-status">Ready</span></div>
+      <div class="transport-center">
+        <button id="stop" class="transport-button" title="Stop"><svg><use href="#i-stop"/></svg></button>
+        <button id="play" class="play-button" title="Play"><svg><use href="#i-play"/></svg></button>
+        <button id="loop" class="transport-button loop-button" title="Loop playback" aria-pressed="false"><svg><use href="#i-loop"/></svg></button>
+        <div class="time-display"><span id="position">001:01:000</span><small>/</small><span id="duration">009:01:000</span></div>
+      </div>
+      <div class="transport-right">
+        <label class="tempo-control"><span>BPM</span><input id="tempo" type="number" min="59" max="300" value="120" /></label>
+      </div>
+    </footer>
+
+    <dialog id="help-dialog" class="modal help-modal">
+      <form method="dialog">
+        <div class="modal-header"><div><p class="eyebrow">QUICK GUIDE</p><h2>Editing the melody</h2></div><button class="modal-close" value="cancel" aria-label="Close">×</button></div>
+        <ol><li>Select a tone channel in the left sidebar.</li><li>Drag on the piano roll to create a note. Drag a note to move it; drag its edge to resize it.</li><li>Right-click a selected note and choose Delete, or press Delete/Backspace.</li><li>Preview both square-wave channels with Play, then export for your EEPROM.</li></ol>
+        <p>Only MIDI pitches C2 through C6 can be encoded by MHS3. The roll is limited to that hardware range.</p>
+        <p id="app-version" class="app-version"></p>
+        <div class="modal-actions"><button value="default" class="export-button">Got it</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="midi-import-dialog" class="modal midi-import-modal" aria-labelledby="midi-import-title">
+      <form id="midi-import-form">
+        <div class="modal-header"><div><p class="eyebrow">MIDI IMPORT</p><h2 id="midi-import-title">Map MIDI channels</h2></div><button id="midi-import-close" class="modal-close" type="button" aria-label="Close">×</button></div>
+        <p id="midi-file-summary" class="modal-lead"></p>
+        <fieldset class="midi-mode-options">
+          <legend>Import mode</legend>
+          <label class="midi-mode-card"><input type="radio" name="midi-mode" value="both" checked /><span><strong>One channel → both voices</strong><small>Split notes and chords across Tone 1 and Tone 2.</small></span></label>
+          <label class="midi-mode-card"><input type="radio" name="midi-mode" value="separate" /><span><strong>Channels → individual voices</strong><small>Choose one MIDI channel for each destination voice.</small></span></label>
+        </fieldset>
+        <div id="midi-both-fields" class="midi-mapping-fields">
+          <label class="dialog-field">MIDI channel for both voices<select id="midi-both-channel"></select></label>
+        </div>
+        <div id="midi-separate-fields" class="midi-mapping-fields" hidden>
+          <label class="dialog-field"><span><i class="mapping-dot channel-one"></i>Tone 1</span><select id="midi-tone-1-channel"></select></label>
+          <label class="dialog-field"><span><i class="mapping-dot channel-two"></i>Tone 2</span><select id="midi-tone-2-channel"></select></label>
+        </div>
+        <label class="dialog-field midi-transpose-field">Transpose
+          <select id="midi-transpose">
+            <option value="-2">Down 2 octaves</option>
+            <option value="-1">Down 1 octave</option>
+            <option value="0" selected>No transpose</option>
+            <option value="1">Up 1 octave</option>
+            <option value="2">Up 2 octaves</option>
+          </select>
+        </label>
+        <p id="midi-range-warning" class="dialog-warning" role="status" aria-live="polite" hidden></p>
+        <p id="midi-import-error" class="dialog-error" role="alert"></p>
+        <div class="modal-actions"><button id="midi-import-cancel" type="button" class="secondary-button">Cancel</button><button type="submit" class="export-button">Import MIDI</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="share-dialog" class="modal share-modal" aria-labelledby="share-dialog-title">
+      <form method="dialog">
+        <div class="modal-header"><div><p class="eyebrow">SHARE SONG</p><h2 id="share-dialog-title">Share this song</h2></div><button class="modal-close" value="cancel" aria-label="Close">×</button></div>
+        <p class="modal-lead">This link contains only the selected song.</p>
+        <label class="dialog-field">Share link<input id="share-url" class="share-url" type="text" readonly aria-label="Share link" /></label>
+        <div class="modal-actions"><button id="copy-share-link" type="button" class="secondary-button">Copy link</button><button value="default" class="export-button">Done</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="shared-song-dialog" class="modal shared-song-modal" aria-labelledby="shared-song-dialog-title">
+      <form id="shared-song-form">
+        <div class="modal-header"><div><p class="eyebrow">OPEN SHARED SONG</p><h2 id="shared-song-dialog-title">Replace current project?</h2></div><button id="shared-song-close" class="modal-close" type="button" aria-label="Close">×</button></div>
+        <p class="modal-lead">Opening this shared song creates a new project with one song. Your current project changes will be discarded.</p>
+        <div class="modal-actions"><button id="shared-song-cancel" type="button" class="secondary-button">Keep current project</button><button type="submit" class="export-button">Open shared song</button></div>
+      </form>
+    </dialog>
+
+    <div id="note-context-menu" class="note-context-menu" role="menu" hidden>
+      <button type="button" role="menuitem" data-action="copy"><span>Copy</span><kbd>Ctrl+C</kbd></button>
+      <button type="button" role="menuitem" data-action="paste"><span>Paste</span><kbd>Ctrl+V</kbd></button>
+      <button type="button" role="menuitem" data-action="cut"><span>Cut</span><kbd>Ctrl+X</kbd></button>
+      <span class="context-divider"></span>
+      <button type="button" role="menuitem" data-action="delete" class="danger"><span>Delete</span><kbd>Del</kbd></button>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="mhsedit-dist.js"></script>
+  </body>
+</html>
